@@ -1,5 +1,5 @@
-use structopt::StructOpt;
 use std::fmt;
+use structopt::StructOpt;
 
 // Using structOpt to parse args into struct
 #[derive(StructOpt)]
@@ -15,12 +15,8 @@ struct Website {
 }
 
 impl fmt::Display for Website {
-    // This trait requires `fmt` with this exact signature.
+    // Added this for testing purposes it will display as `WEBSITE USERNAME PASSWORD`
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        // Write strictly the first element into the supplied output
-        // stream: `f`. Returns `fmt::Result` which indicates whether the
-        // operation succeeded or failed. Note that `write!` uses syntax which
-        // is very similar to `println!`.
         write!(f, "{} {} {}", self.website, self.username, self.password)
     }
 }
@@ -46,8 +42,6 @@ fn read_from_file(mut content: Vec<Website>, cli: Cli) {
             password: password,
         });
     }
-
-    print_content(content);
 }
 
 fn print_content(content: Vec<Website>) {
