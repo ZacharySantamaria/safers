@@ -4,5 +4,5 @@ fn read_from_file() {
 }
 
 fn read_from_file1() {
-    assert_eq!(1,1);
+    assert_eq!(1, 1);
 }
