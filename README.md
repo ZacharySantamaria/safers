@@ -11,5 +11,7 @@ The password manager completely built for the command line
 
 ## TODO
 - [ ] Get the program to write the contents in a file using cryptography pratices. 
+- [ ] Record a video using ``safer``.
+
 
 
