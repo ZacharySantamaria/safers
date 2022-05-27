@@ -23,18 +23,20 @@ impl fmt::Display for Website {
 
 fn main() {
     let args = Cli::from_args();
-    let content: Vec<Website> = Vec::new();
-    read_from_file(content, args);
+    let mut content: Vec<Website> = Vec::new();
+    read_from_file(&mut content, args);
+    print_content(&content)
 }
 
-fn read_from_file(mut content: Vec<Website>, cli: Cli) {
+fn read_from_file(content: &mut Vec<Website>, cli: Cli) {
     let file = std::fs::read_to_string(&cli.path).expect("could not read file");
     println!("Loading contents of file");
 
     for line in file.lines() {
-        let website = line.split_whitespace().next().unwrap_or("").to_string();
-        let username = line.split_whitespace().next().unwrap_or("").to_string();
-        let password = line.split_whitespace().next().unwrap_or("").to_string();
+        let mut words = line.split_whitespace();
+        let website = words.next().unwrap_or("").to_string();
+        let username = words.next().unwrap_or("").to_string();
+        let password = words.next().unwrap_or("").to_string();
 
         content.push(Website {
             website: website,
@@ -44,7 +46,7 @@ fn read_from_file(mut content: Vec<Website>, cli: Cli) {
     }
 }
 
-fn print_content(content: Vec<Website>) {
+fn print_content(content: &Vec<Website>) {
     for website in content {
         println!("{}", website);
     }
