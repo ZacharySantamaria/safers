@@ -33,6 +33,7 @@ fn read_from_file(content: &mut Vec<Website>, cli: Cli) {
     println!("Loading contents of file");
 
     for line in file.lines() {
+        // println!("{}", line);
         let mut words = line.split_whitespace();
         let website = words.next().unwrap_or("").to_string();
         let username = words.next().unwrap_or("").to_string();
