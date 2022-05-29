@@ -24,11 +24,11 @@ impl fmt::Display for Website {
 fn main() {
     let args = Cli::from_args();
     let mut content: Vec<Website> = Vec::new();
-    read_from_file(&mut content, args);
+    load_data_from_file(&mut content, args);
     print_content(&content)
 }
 
-fn read_from_file(content: &mut Vec<Website>, cli: Cli) {
+fn load_data_from_file(content: &mut Vec<Website>, cli: Cli) {
     let file = std::fs::read_to_string(&cli.path).expect("could not read file");
     println!("Loading contents of file");
 
@@ -55,7 +55,7 @@ fn print_content(content: &Vec<Website>) {
 
 #[cfg(test)]
 mod tests {
-    use crate::read_from_file;
+    use crate::load_data_from_file;
     use std::path::PathBuf;
     use crate::Website;
     use crate::Cli;
@@ -65,7 +65,7 @@ mod tests {
     fn test_reading_file1() {
         let args = Cli { path: PathBuf::from("./tests/input1.txt") };
         let mut content: Vec<Website> = Vec::new();
-        read_from_file(&mut content, args);
+        load_data_from_file(&mut content, args);
         assert!(content[0].username == "user".to_string() && content[0].password == "pass".to_string() 
             && content[0].website == "web".to_string())
     }
@@ -75,7 +75,7 @@ mod tests {
         let mut count = 0;
         let args = Cli { path: PathBuf::from("./tests/input2.txt") };
         let mut content: Vec<Website> = Vec::new();
-        read_from_file(&mut content, args);
+        load_data_from_file(&mut content, args);
         let file = std::fs::read_to_string(PathBuf::from("./tests/input2.txt")).expect("could not read file");
 
         for line in file.lines() {
