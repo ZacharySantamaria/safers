@@ -1,5 +1,8 @@
 use std::fmt;
 use structopt::StructOpt;
+use std::path::PathBuf;
+use std::fs::OpenOptions;
+use std::io::Write;
 
 // Using structOpt to parse args into struct
 #[derive(StructOpt)]
@@ -23,14 +26,22 @@ impl fmt::Display for Website {
 
 fn main() {
     let args = Cli::from_args();
+    let directory_path = args.path;
     let mut content: Vec<Website> = Vec::new();
-    load_data_from_file(&mut content, args);
-    print_content(&content)
+    load_data_from_file(&mut content, &directory_path);
+
+    
 }
 
-fn load_data_from_file(content: &mut Vec<Website>, cli: Cli) {
-    let file = std::fs::read_to_string(&cli.path).expect("could not read file");
-    println!("Loading contents of file");
+fn add_data_to_file(content: &mut Vec<Website>, path: &PathBuf) {
+    let mut fileRef = OpenOptions::new().append(true).open(path).expect("Unable to open file");
+    fileRef.write_all("\nwebsite username password".as_bytes()).expect("write failed");
+
+}
+
+fn load_data_from_file(content: &mut Vec<Website>, path: &PathBuf) -> i64 {
+    let file = std::fs::read_to_string(&path).expect("could not read file");
+    let mut amount_of_entries = 0;
 
     for line in file.lines() {
         // println!("{}", line);
@@ -44,7 +55,11 @@ fn load_data_from_file(content: &mut Vec<Website>, cli: Cli) {
             username: username,
             password: password,
         });
+
+        amount_of_entries += 1
     }
+    
+    return amount_of_entries;
 }
 
 fn print_content(content: &Vec<Website>) {
@@ -59,15 +74,17 @@ mod tests {
     use std::path::PathBuf;
     use crate::Website;
     use crate::Cli;
+    use crate::add_data_to_file;
+    use crate::print_content;
 
 
     #[test]
     fn test_reading_file1() {
         let args = Cli { path: PathBuf::from("./tests/input1.txt") };
         let mut content: Vec<Website> = Vec::new();
-        load_data_from_file(&mut content, args);
+        let entry_count = load_data_from_file(&mut content, &args.path);
         assert!(content[0].username == "user".to_string() && content[0].password == "pass".to_string() 
-            && content[0].website == "web".to_string())
+            && content[0].website == "web".to_string() && entry_count == 1)
     }
 
     #[test]
@@ -75,7 +92,7 @@ mod tests {
         let mut count = 0;
         let args = Cli { path: PathBuf::from("./tests/input2.txt") };
         let mut content: Vec<Website> = Vec::new();
-        load_data_from_file(&mut content, args);
+        load_data_from_file(&mut content, &args.path);
         let file = std::fs::read_to_string(PathBuf::from("./tests/input2.txt")).expect("could not read file");
 
         for line in file.lines() {
@@ -91,6 +108,22 @@ mod tests {
         }
 
         assert!(true)
+    }
+
+    #[test]
+    fn test_adding_entry(){
+        let args = Cli { path: PathBuf::from("./tests/input2.txt") };
+        let mut content: Vec<Website> = Vec::new();
+        
+        load_data_from_file(&mut content, &args.path);
+        content.push(Website{website: "web".to_string(), username: "user1".to_string(), password: "pass1".to_string()});
+        add_data_to_file(&mut content, &args.path);
+        let entry_count = load_data_from_file(&mut content, &args.path);
+        // print_content(&content);
+        assert!(content[0].username == "user".to_string() && content[0].password == "pass".to_string() 
+            && content[0].website == "web".to_string() && content[1].username == "user1".to_string() && content[1].password == "pass1".to_string() 
+            && content[1].website == "web1".to_string() && entry_count == 5)
+        
     }
 }
 
