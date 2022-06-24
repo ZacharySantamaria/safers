@@ -1,3 +1,25 @@
+/*
+This is intended to be a rust only CLI password manager. The idea is to have it all within this main 
+file since much of the code base will be fairly small. 
+
+Implementation: The idea is to have a very basic version of a password manager. This means
+storing much of the contents in plain text. I will eventually change this but for now, 
+this is just a small project. It will store the contents in this order.
+
+EXAMPLE
+(WEBSITE) (USER) (PASS)
+
+In a file not yet decided upon. To load this file it will retreive the contents and use a 
+struct called Website then have a vector of Websites that stores all the data. The idea is
+once the user is ready to quit it will save the data to the file.
+
+Considerations: Possibly use a database to store the content. The idea was to have it self-hosting
+that way you only need to carry around the Database file then just load it when you download this
+from Github. 
+
+WORKING ON: UPDATE and DELETE
+*/
+
 use std::fmt;
 use structopt::StructOpt;
 use std::path::PathBuf;
@@ -44,7 +66,6 @@ fn load_data_from_file(content: &mut Vec<Website>, path: &PathBuf) -> i64 {
     let mut amount_of_entries = 0;
 
     for line in file.lines() {
-        // println!("{}", line);
         let mut words = line.split_whitespace();
         let website = words.next().unwrap_or("").to_string();
         let username = words.next().unwrap_or("").to_string();
@@ -76,6 +97,7 @@ mod tests {
     use crate::Cli;
     use crate::add_data_to_file;
     use crate::print_content;
+    use crate::delete_websites;
 
 
     #[test]
